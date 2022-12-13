@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "163529538071",
+    "project_id": "happysteps1-4c0bf",
+    "storage_bucket": "happysteps1-4c0bf.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:163529538071:android:39d20b88170ec64a89fa52",
+        "android_client_info": {
+          "package_name": "com.example.happysteps1"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "163529538071-f200e7mtjthm7tqqc74e2r87uqcuu5f9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAD4xJLCtkddS6dqFfK3kzmuS7fgUxXxFs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "163529538071-f200e7mtjthm7tqqc74e2r87uqcuu5f9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
