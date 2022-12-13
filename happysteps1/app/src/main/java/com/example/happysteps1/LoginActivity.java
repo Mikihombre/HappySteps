@@ -87,7 +87,7 @@ public class LoginActivity extends AppCompatActivity {
                                     @Override
                                     public void onSuccess(AuthResult authResult) {
                                         Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
-                                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                                        startActivity(new Intent(LoginActivity.this, Splash.class));
                                         finish();
                                     }
                                 }).addOnFailureListener(new OnFailureListener() {
@@ -152,7 +152,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onAuthenticationSucceeded(
                     @NonNull BiometricPrompt.AuthenticationResult result) {
                 super.onAuthenticationSucceeded(result);
-                startActivity(new Intent(LoginActivity.this,MainActivity.class));
+                startActivity(new Intent(LoginActivity.this,Splash.class));
                 Toast.makeText(getApplicationContext(),
                         "Weryfikacja udana!", Toast.LENGTH_SHORT).show();
             }
