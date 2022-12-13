@@ -6,10 +6,14 @@ import static androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTI
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.text.method.HideReturnsTransformationMethod;
+import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -30,6 +34,8 @@ import java.util.concurrent.Executor;
 
 public class LoginActivity extends AppCompatActivity {
 
+    EditText password;
+    CheckBox showpassword;
     private static final int REQUEST_CODE = 101010;
     ImageView imageViewLogin;
 
@@ -53,6 +59,20 @@ public class LoginActivity extends AppCompatActivity {
         loginPassword = findViewById(R.id.login_password);
         loginButton = findViewById(R.id.login_button);
         signupRedirectText = findViewById(R.id.signupRedirectText);
+
+        password = findViewById(R.id.login_password);
+        showpassword = findViewById(R.id.showpassword);
+
+        showpassword.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    password.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                } else {
+                    password.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                }
+            }
+        });
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -158,6 +178,11 @@ public class LoginActivity extends AppCompatActivity {
         });
 
     }
+
+
+
+
+
 
     @Override public void onBackPressed() {
         super.onBackPressed();
