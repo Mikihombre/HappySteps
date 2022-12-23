@@ -61,14 +61,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         reset.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if(event.getAction()==MotionEvent.ACTION_DOWN){
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     reset.startAnimation(ScaleUp);
-                }else if(event.getAction()==MotionEvent.ACTION_UP){
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
                     reset.startAnimation(ScaleDown);
                 }
                 resetSteps();
                 resetPreviousTotalSteps();
-                saveData();
                 return true;
             }
         });
@@ -133,8 +132,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     }
     private void resetSteps() {
-        totalSteps = 0f;
-        updateStepCounterView();
+        currentSteps = 0;
+        saveData();
     }
 
     private void resetPreviousTotalSteps() {
@@ -150,14 +149,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private void saveData() {
         SharedPreferences sharedPreferences = getSharedPreferences("shared preferences", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putFloat("total steps", totalSteps);
+        editor.putInt("total steps", currentSteps);
         editor.apply();
     }
-
     private void loadData() {
         SharedPreferences sharedPreferences = getSharedPreferences("shared preferences", MODE_PRIVATE);
-        totalSteps = sharedPreferences.getFloat("total steps", 0);
+        totalSteps = sharedPreferences.getInt("total steps", 0);
     }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -188,10 +187,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (running) {
-            float currentSteps = event.values[0];
-            totalSteps = totalSteps + currentSteps - previousTotalSteps;
-            previousTotalSteps = currentSteps;
-            tv_licznik.setText(String.valueOf(totalSteps));
+            float totalSteps = event.values[0];
+            currentSteps = (int) ((int) (totalSteps - previousTotalSteps) + totalSteps);
+            tv_licznik.setText(String.valueOf(currentSteps));
 
             CircularProgressBar progressCircular = this.circularProgressBar;
             if (progressCircular != null) {
