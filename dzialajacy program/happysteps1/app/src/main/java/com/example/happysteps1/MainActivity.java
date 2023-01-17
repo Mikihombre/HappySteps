@@ -11,23 +11,18 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.os.Handler;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mikhaellopez.circularprogressbar.CircularProgressBar;
 
 import java.util.Locale;
-
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
-
     int currentSteps;
     TextView tv_licznik;
     SensorManager sensorManager;
@@ -38,6 +33,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     int i=0;
     ImageView reset,chat,settings,stats,dystans;
     Animation ScaleUp,ScaleDown;
+
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,18 +52,20 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         ScaleUp = AnimationUtils.loadAnimation(this,R.anim.scale_up);
         ScaleDown = AnimationUtils.loadAnimation(this,R.anim.scale_down);
 
-        loadData();
+
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        loadData();
         reset.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                if(event.getAction()==MotionEvent.ACTION_DOWN){
                     reset.startAnimation(ScaleUp);
-                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                }else if(event.getAction()==MotionEvent.ACTION_UP){
                     reset.startAnimation(ScaleDown);
                 }
                 resetSteps();
                 resetPreviousTotalSteps();
+                saveData();
                 return true;
             }
         });
@@ -111,10 +109,22 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 }else if(event.getAction()==MotionEvent.ACTION_UP){
                     dystans.startAnimation(ScaleDown);
                 }
+
+                // Sprawdź, czy obecnie wyświetlany jest dystans, czy ilość kroków
+                if (tv_licznik.getText().toString().endsWith("m")) {
+                    // Obecnie wyświetlany jest dystans, więc należy pokazać ilość kroków
+                    tv_licznik.setText(String.format(Locale.getDefault(), "%f", totalSteps));
+                } else {
+                    // Obecnie wyświetlana jest ilość kroków, więc należy pokazać dystans
+                    float dystansKm = obliczDystans();
+                    tv_licznik.setText(String.format(Locale.getDefault(), "%.2f m", dystansKm));
+                }
                 return true;
 
             }
         });
+
+
 
         stats.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -131,8 +141,24 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         });
 
     }
+    private float obliczDystans() {
+        // pobierz ilość kroków
+        float kroki = totalSteps;
+
+        // załóżmy, że jeden krok to 0,75 metra
+        float dystans = (float) (kroki * 0.75);
+
+        // ustaw wartość dystansu na widoku tv_licznik
+
+        return dystans;
+    }
+
+
+
     private void resetSteps() {
-        currentSteps = 0;
+        totalSteps = 0f;
+        updateStepCounterView();
+        circularProgressBar.setProgressWithAnimation(totalSteps);
         saveData();
     }
 
@@ -149,14 +175,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private void saveData() {
         SharedPreferences sharedPreferences = getSharedPreferences("shared preferences", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putInt("total steps", currentSteps);
+        editor.putFloat("total steps", totalSteps);
         editor.apply();
     }
+
     private void loadData() {
         SharedPreferences sharedPreferences = getSharedPreferences("shared preferences", MODE_PRIVATE);
-        totalSteps = sharedPreferences.getInt("total steps", 0);
+        totalSteps = sharedPreferences.getFloat("total steps", 0);
     }
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -187,9 +213,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (running) {
-            float totalSteps = event.values[0];
-            currentSteps = (int) ((int) (totalSteps - previousTotalSteps) + totalSteps);
-            tv_licznik.setText(String.valueOf(currentSteps));
+            float currentSteps = event.values[0];
+            totalSteps =  currentSteps - previousTotalSteps;
+            tv_licznik.setText(String.valueOf(totalSteps));
 
             CircularProgressBar progressCircular = this.circularProgressBar;
             if (progressCircular != null) {
